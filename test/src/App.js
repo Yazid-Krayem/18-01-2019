@@ -4,9 +4,14 @@ import io from 'socket.io-client';
 
 class App extends Component {
   state = {
-    isConnected:false
+    isConnected:false,
+    id:null
+
   }
   socket = null
+  
+  
+
 
   componentDidMount(){
 
@@ -15,9 +20,21 @@ class App extends Component {
     this.socket.on('connect', () => {
       this.setState({isConnected:true})
     })
+
+    //pong
     this.socket.on('pong!',()=>{
       console.log('the server answered!')
     })
+    this.socket.on('pong!',(additionalStuff)=>{
+      console.log('server answered!', additionalStuff)
+    })
+
+    //id status
+    this.socket.on('youare',(answer)=>{
+      this.setState({id:answer.id})
+    })
+  
+  
     
 
     this.socket.on('disconnect', () => {
@@ -37,12 +54,17 @@ class App extends Component {
 
   render() {
     return (
-      <div>status: {this.state.isConnected ? 'connected' : 'disconnected'}
-              <button onClick={()=>this.socket.emit('ping!')}>ping</button>
+      <div className="main">
+      <div>status: {this.state.isConnected ? 'connected' : 'disconnected'}</div>
+      {/* add: */}
+      <div>id: {this.state.id}</div>
+      <button onClick={()=>this.socket.emit('ping!')}>ping</button>
+      {/* and also add: */}
+      <button onClick={()=>this.socket.emit('whoami')}>Who am I?</button>
 
-      
-      
       </div>
+      
+      
       
       );
   }
