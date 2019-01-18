@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
+import './app.css'
 
 class App extends Component {
   state = {
@@ -49,22 +50,28 @@ class App extends Component {
   componentWillUnmount(){
     this.socket.close()
     this.socket = null
+    //scrollDown
+  
   }
+  
 
   render() {
     return (
       <div className="App">
+      <div className="id-ping">
         <div>status: {this.state.isConnected ? 'connected' : 'disconnected'}</div>
-        <button onClick={()=>this.socket.emit('ping!')}>Ping</button>
+        <button className="button" onClick={()=>this.socket.emit('ping!')}>Ping</button>
         <h4> Hello: {this.state.id} </h4>
         <ul> {this.state.peeps ? this.state.peeps.map(x => <li key={x}> {x} </li>) : "null" }</ul>
-        
-        <div>
-          <ul> {this.state.old_messages.map((x, i) => <li key={i}> {x.name} - {x.text} </li>)}</ul>
         </div>
 
+        <div className="old-message">
+          <ul> {this.state.old_messages.map((x, i) => <li key={i}> {x.name} - {x.text} </li>)}</ul>
+
         <input type="text" name="msgbox" onChange={e => this.setState({ new_message: e.target.value })} />
-        <button onClick={()=>this.socket.emit("message", {text: this.state.new_message, id: this.state.id, name: this.state.name})}>Send a message</button>
+        <button className="button" onClick={()=>this.socket.emit("message", {text: this.state.new_message, id: this.state.id, name: this.state.name})}>Send a message</button>
+        </div>
+
       </div>
     );
   }

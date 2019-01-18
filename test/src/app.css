@@ -1,0 +1,33 @@
+body{
+    background-color: blueviolet;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 20px;
+}
+.App{
+    border: solid 1px bisque;
+    
+}
+.id-ping{
+    border: solid 1px black;
+    width: 49%;
+    display: -ms-inline-grid;
+    float: left;
+    padding: 0;
+    margin: 0;
+    background-color: blue;
+    z-index: inherit;
+}
+.old-message{
+    background-color: gray;
+    border: solid 1px black;
+    width: 50%;
+    float:right;
+    padding: 0;
+    margin: 0;
+    padding-inline-end: 5px;
+}
+.button {
+    background: red;
+    border-radius: 8px;
+    color: white;
+  }
