@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
 
-
 class App extends Component {
   state = {
     isConnected:false,
-    id:null
-
+    id:null,
+    peeps: [],
+    old_messages: [],
+    name: "y@zid",
+    new_message: "" 
   }
   socket = null
-  
-  
-
 
   componentDidMount(){
 
@@ -21,30 +20,30 @@ class App extends Component {
       this.setState({isConnected:true})
     })
 
-    //pong
-    this.socket.on('pong!',()=>{
-      console.log('the server answered!')
-    })
-    this.socket.on('pong!',(additionalStuff)=>{
-      console.log('server answered!', additionalStuff)
-    })
-
-    //id status
-    this.socket.on('youare',(answer)=>{
-      this.setState({id:answer.id})
-    })
-  
-  
-    
-
     this.socket.on('disconnect', () => {
       this.setState({isConnected:false})
     })
 
     /** this will be useful way, way later **/
-    this.socket.on('room', old_messages => console.log(old_messages))
+    this.socket.on('room', (messages) => {
+      console.log(messages)
+      this.setState({old_messages:messages})
+    })
 
 
+
+    this.socket.on('pong!',(additionalStuff)=>{
+      console.log('testing', additionalStuff)
+    })  
+
+    this.socket.emit('whoami'); // Auto Update
+    this.socket.on('youare',(answer)=>{
+      this.setState({id:answer.id})
+    })
+
+    this.socket.on('peeps',(answer)=>{
+      this.setState({peeps:answer})
+    })
   }
 
   componentWillUnmount(){
@@ -54,20 +53,22 @@ class App extends Component {
 
   render() {
     return (
-      <div className="main">
-      <div>status: {this.state.isConnected ? 'connected' : 'disconnected'}</div>
-      {/* add: */}
-      <div>id: {this.state.id}</div>
-      <button onClick={()=>this.socket.emit('ping!')}>ping</button>
-      {/* and also add: */}
-      <button onClick={()=>this.socket.emit('whoami')}>Who am I?</button>
+      <div className="App">
+        <div>status: {this.state.isConnected ? 'connected' : 'disconnected'}</div>
+        <button onClick={()=>this.socket.emit('ping!')}>Ping</button>
+        <h4> Hello: {this.state.id} </h4>
+        <ul> {this.state.peeps ? this.state.peeps.map(x => <li key={x}> {x} </li>) : "null" }</ul>
+        
+        <div>
+          <ul> {this.state.old_messages.map((x, i) => <li key={i}> {x.name} - {x.text} </li>)}</ul>
+        </div>
 
+        <input type="text" name="msgbox" onChange={e => this.setState({ new_message: e.target.value })} />
+        <button onClick={()=>this.socket.emit("message", {text: this.state.new_message, id: this.state.id, name: this.state.name})}>Send a message</button>
       </div>
-      
-      
-      
-      );
+    );
   }
 }
+
 
 export default App;
